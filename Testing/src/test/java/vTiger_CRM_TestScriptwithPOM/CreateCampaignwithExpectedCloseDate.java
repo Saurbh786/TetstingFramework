@@ -1,0 +1,76 @@
+package vTiger_CRM_TestScriptwithPOM;
+
+import java.io.IOException;
+
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+import vTiger_CRM_ObjectRepository.CampaignInfoPage;
+import vTiger_CRM_ObjectRepository.CreateNewCampaign;
+import vTiger_CRM_ObjectRepository.HomePage;
+import vTiger_CRM_ObjectRepository.Login_Page;
+import vTiger_CRM_genericFileUtility.ExcelUtility;
+import vTiger_CRM_genericFileUtility.FileUtility;
+import vTiger_CRM_genericJavaUtility.JavaUtility;
+import vTiger_CRM_genericWebdriverUtility.WebdriverUtility;
+
+public class CreateCampaignwithExpectedCloseDate {
+
+	public static void main(String[] args) throws IOException {
+		FileUtility putil = new FileUtility();
+		String BROWSER = putil.readDataFromProperties("Browser");
+		String URL = putil.readDataFromProperties("Url");
+		String UNAME = putil.readDataFromProperties("Username");
+		String PWD = putil.readDataFromProperties("Password");
+		//Cross Browser Testing
+		WebDriver driver = null;
+		if (BROWSER.equalsIgnoreCase("chrome")) {
+				driver = new ChromeDriver();
+		} else if (BROWSER.equalsIgnoreCase("edge")) {
+			driver = new EdgeDriver();
+		} else if (BROWSER.equalsIgnoreCase("firefox")) {
+			driver = new FirefoxDriver();
+		} else {
+			driver = new ChromeDriver();
+		}
+		// Generate Random NUmber
+		JavaUtility jutil = new JavaUtility();
+		int ranNum = jutil.getRandomNUmber();
+		// Get Expected close date
+		String expectedCloseDate = jutil.getRequiredDateyyyyMMdd(20);
+		// Read data from Excel
+		ExcelUtility eutil = new ExcelUtility();
+		String campName = eutil.readDatafromExcel("Campaign", 1, 2)+ranNum;
+		//Actual Test Script
+		WebdriverUtility wutil = new WebdriverUtility();
+		driver.manage().window().maximize();
+		wutil.waitForPageToLoad(driver);
+		driver.get(URL);
+		//Login to vtiger
+		Login_Page lp = new Login_Page(driver);
+		lp.login(UNAME, PWD);
+		HomePage hp = new HomePage(driver);
+		hp.goToCampaign();
+		CreateNewCampaign cnc = new CreateNewCampaign(driver);
+		cnc.getCampaignLookupimgBtn().click();
+		cnc.createCampaignwithCloseDate(campName, expectedCloseDate);
+		System.out.println("ExpectedCloseDate is: "+expectedCloseDate);
+		// Verify campaign is created with close date
+		CampaignInfoPage cip = new CampaignInfoPage(driver);
+		String headerMsg = cip.getHeaderInfoMsg().getText();
+		if(headerMsg.contains(campName)) {
+			System.out.println("Successfully created campaign with: "+campName);
+		}
+		else {
+			System.out.println("Failed to create campaign with: "+campName);
+		}
+		// Logout from vtiger
+		hp.logoutFromCRM(driver);
+		driver.quit();
+
+
+	}
+
+}

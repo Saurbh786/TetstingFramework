@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite thread-count="2" parallel="tests" name="Suite" verbose="3">
+<listeners>
+<listener class-name="vTiger_CRM_ListneresImplementationUtility.ListenersImplementationClass"/>
+</listeners>
+  <test name="Product Test">
+  <parameter name="BROWSER" value="Chrome"/>
+    <classes>
+      <class name="vTiger_CRM_TestScriptWith_BaseClass.CreateProductUsingBaseClass"/>
+      </classes>
+       </test> 
+      
+      <test name="Org Test"> 
+      <parameter name="BROWSER" value="Chrome"/>
+        <classes>
+      <class name="vTiger_CRM_TestScriptWith_BaseClass.CreateOrgUsingBaseClass"/>
+       </classes>
+       </test>
+       
+      <test name="Campaign Test"> 
+      <parameter name="BROWSER" value="Chrome"/>
+        <classes>  
+      <class name="vTiger_CRM_TestScriptWith_BaseClass.CreateCampaignUsingBaseClass"/>
+       </classes>
+       </test>
+       
+       <test name="Contact Test">
+       <parameter name="BROWSER" value="Chrome"/> 
+        <classes>   
+      <class name="vTiger_CRM_TestScriptWith_BaseClass.CreateContactUsingBaseClass"/>
+    </classes>
+  </test> <!-- Test -->
+</suite> <!-- Suite -->
